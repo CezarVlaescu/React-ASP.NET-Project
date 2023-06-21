@@ -1,33 +1,46 @@
-import { useEffect, useState } from "react";
-import { Product } from "../models/product";
+import { useState } from "react";
 import Catalog from "../../features/catalog/Catalog";
+import Header from "./Header";
+import { Container, CssBaseline, ThemeProvider, createTheme } from "@mui/material";
+import { Route, Routes } from "react-router-dom";
+import HomePage from "../../features/home/HomePage";
+import ProductDetails from "../../features/catalog/ProductDetails";
+import AboutPage from "../../features/about/AboutPage";
+import ContactPage from "../../features/contact/ContactPage";
 
-function App() {
-  const [products, setProducts] = useState<Product[]>([]);
+function App() { 
 
-  useEffect(() => {
-    fetch('http://localhost:5054/api/Products')
-      .then(response => response.json())
-      .then(data => setProducts(data))
-      .catch(err => console.log(err));
-  }, []);
+  const [darkMode, setDarkMode] = useState(false);
+  const palleteType = darkMode ? 'dark' : 'light';
+  
+  const theme = createTheme({
+    palette: {
+      mode: palleteType,
+      background : {
+        default : palleteType === 'light' ? '#eaeaea' : '#121212'
+      }
+    }
+  })
 
-  function addProduct(){
-    setProducts( prevState => [...prevState, 
-      {
-        id: prevState.length + 101,
-        name: 'product' + (prevState.length + 1), 
-        price: (prevState.length * 100) + 100,
-        brand: 'somebrand',
-        description : 'some description',
-        pictureUrl : 'http://picture.photos/200'
-      }])
-  };
+  function handleThemeChanges(){
+    setDarkMode(!darkMode);
+  }
   return (
-    <div className="app">
-      <h1>Re-Store</h1>
-      <Catalog products={products} addProduct={addProduct}/>     
-    </div>
+    <>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Header darkMode={darkMode} handleThemeChanges={handleThemeChanges} />
+        <Container>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/catalog/:id" element={<ProductDetails />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+          </Routes>         
+        </Container>
+      </ThemeProvider>       
+    </>
   );
 }
 

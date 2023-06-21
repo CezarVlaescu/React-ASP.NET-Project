@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using API.Data;
 using API.Entities;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,7 +20,7 @@ namespace API.Controllers
         {
             this._context = context;          
         }
-
+        
         [HttpGet]
         public async Task<ActionResult<List<Product>>> GetProducts()
         {
